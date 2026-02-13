@@ -7,7 +7,6 @@ class Product {
         this.image = image;
     }
 }
-
 function getId() {
     let products = JSON.parse(localStorage.getItem("products") || "[]");
     if (products.length == 0) {
@@ -18,7 +17,6 @@ function getId() {
 }
 
 document.querySelector(".btn-primary").addEventListener("click", addProduct);
-
 function addProduct() {
     let name = document.getElementById("exampleFormControlInput1").value;
     let price = document.getElementById("exampleFormControlInput2").value;
@@ -52,10 +50,40 @@ function displayProduct(product){
         <h5 class="card-title">${product.name} (ID: ${product.id})</h5>
         <p class="card-text">Price: ${product.price}</p>
         <p class="card-text">${product.description}</p>
-        <button class="btn btn-secondary">Edit
+        <button class="btn btn-secondary">Edit</button>
+        <button class="btn btn-danger">Delete</button>
     </div>
     `;
     container.appendChild(card);
+}
+
+document.querySelector("#form-select").addEventListener("change",sortby);
+function sortby(product){
+    let sortBy=document.getElementById("#form-select").value;
+    let products=JSON.parse(localStorage.getItem("products") || "[]");
+    if(sortBy=="id"){
+        products.sort((a,b)=>a.id - b.id);
+    }else if (sortBy=="name") {
+        products.sort((a,b)=> a.name.localCompare(b.name));
+    }else (sortBy=="price"); {
+        products.sort((a,b)=>a.price - b.price);
+    }
+    localStorage.setItem("products",JSON.stringify(products));
+    refreshCards(products);
+}
+
+function refreshCards(){
+    let refresh=document.getElementById("card-container").value;
+    refresh.innerHTML="";
+    let products=JSON.parse(localStorage.getItem("products") || "[]");
+    products.forEach(product => displayProduct(product));
+
+}
+
+document.querySelector("exampleFormControlInput4").addEventListener("click",filter);
+function filter(){
+    let filterby=document.getElementById("exampleFormControlInput4").value;
+    
 }
 
 window.onload=function(){
