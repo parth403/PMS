@@ -1,3 +1,4 @@
+let allproducts=[];
 class Product {
     constructor(id, name, price, description, image) {
         this.id = id;
@@ -7,6 +8,8 @@ class Product {
         this.image = image;
     }
 }
+
+// Function for auto increment id
 function getId() {
     let products = JSON.parse(localStorage.getItem("products") || "[]");
     if (products.length == 0) {
@@ -16,11 +19,12 @@ function getId() {
     }
 }
 
-document.querySelector(".btn-primary").addEventListener("click", addProduct);
+// Function to add Product
+document.getElementById("submitbtn").addEventListener("click", saveProduct);
 function addProduct() {
     let name = document.getElementById("exampleFormControlInput1").value;
     let price = document.getElementById("exampleFormControlInput2").value;
-    let description = document.getElementById("exampleFormControlTextarea1",).value;
+    let description = document.getElementById("exampleFormControlTextarea1").value;
     let image = document.getElementById("exampleFormControlFile1").files[0];
 
 
@@ -29,64 +33,85 @@ read.onload = function (e) {
     let imageBase64 = e.target.result;
     let id = getId();
     let newProduct = new Product(id, name, price, description, imageBase64);
-    let products = JSON.parse(localStorage.getItem("products") || "[]");
-    products.push(newProduct);
-    localStorage.setItem("products", JSON.stringify(products));
-    displayProduct(newProduct);
+    allproducts.push(newProduct);
+    localStorage.setItem("products", JSON.stringify(allproducts));
+    refreshCards(allproducts);
 };
 read.readAsDataURL(image);
 }
 
+
+//Function to save product after updating
+function saveProduct()
+{
+    let editId=document.getElementById("editId").value;
+    if(editId){
+        updateProduct(editId);
+    }else{
+        addProduct();
+    }
+}
+
+// Function to display all the products
 function displayProduct(product){
-    let container=document.getElementById("card-container");
-
-    let card=document.createElement("div");
-    card.className="card";
-    card.style="width: 18rem; margin: 10px;";
-
-    card.innerHTML=`
-    <img class="card-img-top" src="${product.image}">
+    return`
+    <div class="card" style="width:18rem; margin:10px;">
+    <img class="card-img-top" style="width:100%; height:200px; object-fit:cover;" src="${product.image}">
     <div class="card-body">
         <h5 class="card-title">${product.name} (ID: ${product.id})</h5>
         <p class="card-text">Price: ${product.price}</p>
         <p class="card-text">${product.description}</p>
-        <button class="btn btn-secondary">Edit</button>
-        <button class="btn btn-danger">Delete</button>
+        <button class="btn btn-secondary" onclick="edit_product(${product.id})">Edit</button>
+        <button class="btn btn-danger" onclick="delete_product(${product.id})">Delete</button>
     </div>
     `;
-    container.appendChild(card);
 }
 
-document.querySelector("#form-select").addEventListener("change",sortby);
-function sortby(product){
-    let sortBy=document.getElementById("#form-select").value;
-    let products=JSON.parse(localStorage.getItem("products") || "[]");
+// Function to Sort the products by id ,name,price
+document.getElementById("form-select").addEventListener("change",sortby);
+function sortby(){
+    let sortBy=document.getElementById("form-select").value;
+    let products=[...allproducts];
     if(sortBy=="id"){
         products.sort((a,b)=>a.id - b.id);
     }else if (sortBy=="name") {
-        products.sort((a,b)=> a.name.localCompare(b.name));
-    }else (sortBy=="price"); {
+        products.sort((a,b)=> a.name.localeCompare(b.name));
+    }else if (sortBy=="price") {
         products.sort((a,b)=>a.price - b.price);
     }
     localStorage.setItem("products",JSON.stringify(products));
     refreshCards(products);
 }
 
-function refreshCards(){
-    let refresh=document.getElementById("card-container").value;
+function refreshCards(list){
+    let refresh=document.getElementById("card-container");
     refresh.innerHTML="";
-    let products=JSON.parse(localStorage.getItem("products") || "[]");
-    products.forEach(product => displayProduct(product));
-
+    list.forEach(product=>{
+        refresh.innerHTML+=displayProduct(product);
+    });
 }
 
-document.querySelector("exampleFormControlInput4").addEventListener("click",filter);
+//Function to filter products by id (Ex - From:1 - To:3)
 function filter(){
-    let filterby=document.getElementById("exampleFormControlInput4").value;
-    
+    let from=document.getElementById("exampleFormControlInput4").value;
+    let to=document.getElementById("exampleFormControlInput5").value;
+
+    from=parseInt(from);
+    to=parseInt(to);
+    let products=JSON.parse(localStorage.getItem("products")|| "[]");
+    if(!from && !to){
+        refreshCards(allproducts);
+        return;
+    }
+    let filtered=products.filter(p=>{
+        return p.id>=from && p.id<=to;
+    });
+    refreshCards(filtered);
+    console.log("filter");
 }
 
+// Function to display(onload) all the products while window loads
 window.onload=function(){
-    let products=JSON.parse(localStorage.getItem("products") || "[]");
-    products.forEach(p => displayProduct(p));
+    allproducts=JSON.parse(localStorage.getItem("products") || "[]");
+    refreshCards(allproducts);
 };

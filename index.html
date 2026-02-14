@@ -37,20 +37,21 @@
             <label for="exampleFormControlFile1">Product Image</label>
             <input type="file" class="form-control-file" id="exampleFormControlFile1">
         </div>
-        <button type="button" class="btn btn-primary">Submit</button>
+        <button type="button" id="submitbtn"class="btn btn-primary">Submit</button>
+        <input type="hidden" id="editId">
         <div class="form-group" style="width: 25%; display: flex; margin: auto; ">
             <label for="exampleFormControlInput4">From:</label>
             <input type="number" class="form-control" id="exampleFormControlInput4">&nbsp;
             <label for="exampleFormControlInput5">To:</label>
             <input type="number" class="form-control" id="exampleFormControlInput5"><br>&nbsp;
-            <button type="button" class="btn btn-primary">Filter</button>
+            <button type="button" class="btn btn-primary" onclick="filter()">Filter</button>
         </div>
         <div class="form-group" style="display: flex;display: ruby;">
             <p>Sort By:</p>
-            <select id="form-select" aria-label="Default select example">
-                <option value="1">Product Id</option>
-                <option value="2">Product Name</option>
-                <option value="3">Price</option>
+            <select id="form-select" onchange="sortby()" aria-label="Default select example">
+                <option value="id">Product Id</option>
+                <option value="name">Product Name</option>
+                <option value="price">Price</option>
             </select>
         </div>
     </form>
@@ -68,5 +69,6 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
     <script src="script.js"></script>
+    <script src="update.js"></script>
 </body>
 </html>
